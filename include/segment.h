@@ -6,6 +6,7 @@ public:
 	void initSegment(float radius, float outlineThickness, sf::Color fillColor, sf::Color outlineColor, sf::Vector2f startPos);
 	void constraintDistance(sf::Vector2f anchorPosition, float constraintLength);
 	void drawSegment(sf::RenderWindow& window);
+	void Segment::setPos(sf::Vector2f newPos);
 	sf::Vector2f getPos();
 	~Segment() {};
 private:

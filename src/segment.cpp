@@ -15,6 +15,10 @@ sf::Vector2f Segment::getPos() {
 	return segment.getPosition();
 }
 
+void Segment::setPos(sf::Vector2f newPos) {
+	segment.setPosition(newPos);
+}
+
 void Segment::constraintDistance(sf::Vector2f anchorPosition, float constraintLength) {
 	sf::Vector2f segmentPos = segment.getPosition();
 	sf::Vector2f arrowDir = segmentPos - anchorPosition;

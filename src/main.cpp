@@ -3,11 +3,11 @@
 int main()
 {
 	sf::Vector2u WIDTH_HEIGHT = { 900, 700 };
-	int snakeLength = 30;
-	float linkLength = 70.0f;
+	std::vector<float> snakeRadii = {10.0f, 15.0f, 5.0f, 15.0f, 20.0f, 20.0f, 20.0f, 15.0f, 5.0f, 5.0f, 5.0f, 5.0f, 3.0f, 3.0f, 1.0f, 1.0f, 1.0f};
+	float linkLength = 35.0f;
 
 	sf::RenderWindow window(sf::VideoMode(WIDTH_HEIGHT), "Procedural Animation");
-	Snake snake(snakeLength, linkLength);
+	Snake snake(snakeRadii, linkLength);
 
 	while ( window.isOpen() )
 	{
