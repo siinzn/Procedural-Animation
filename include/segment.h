@@ -8,6 +8,7 @@ public:
 	void drawSegment(sf::RenderWindow& window);
 	void Segment::setPos(sf::Vector2f newPos);
 	sf::Vector2f getPos();
+	float getRadii();
 	~Segment() {};
 private:
 	sf::CircleShape segment;

@@ -19,6 +19,7 @@ int main()
 
 		sf::Vector2f mousePos = sf::Vector2f(sf::Mouse::getPosition(window));
 		snake.update(mousePos);
+		snake.parametric_eq();
 		window.clear();
 		snake.draw(window);
 		window.display();

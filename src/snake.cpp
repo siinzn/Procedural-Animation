@@ -11,13 +11,13 @@ void Snake::update(sf::Vector2f targetPos) {
 	for (size_t i = 0; i < segments.size();i++) {
 		segments[i].constraintDistance(targetPos, linkLength);
 		if (i >= 2) {
-			bend(segments, i);
+			bend(i);
 		}
 		targetPos = segments[i].getPos();
 	}
 }
 
-void Snake::bend(std::vector<Segment>segment, size_t i) {
+void Snake::bend(size_t i) {
 	// get position of 2 segment before segment[i]
 	sf::Vector2f aPos = segments[i - 2].getPos();
 	// get position of 1 segment before segment[i]
@@ -46,8 +46,41 @@ void Snake::bend(std::vector<Segment>segment, size_t i) {
 	segments[i].setPos(newCPos);
 }
 
+void Snake::parametric_eq() {
+	leftPoints.clear();
+	rightPoints.clear();
+	float angle = 0.0;
+	for (size_t i = 0; i < segments.size(); i++) {
+		sf::Vector2f current = segments[i].getPos();
+		
+		if (i > 0) {
+			sf::Vector2f ahead = segments[i - 1].getPos();
+			sf::Vector2f heading = ahead - current;
+			angle = atan2(heading.y, heading.x);
+		}
+		else if (i == 0) {
+			sf::Vector2f heading = current - segments[1].getPos();
+			angle = atan2(heading.y, heading.x);
+		}
+		sf::Vector2f left = current + sf::Vector2f(cos(angle + (pi / 2)), sin(angle + (pi / 2))) * segments[i].getRadii();
+		sf::Vector2f right = current + sf::Vector2f(cos(angle - (pi / 2)), sin(angle - (pi / 2))) * segments[i].getRadii();
+		leftPoints.push_back(left);
+		rightPoints.push_back(right);
+	}
+}
+
 void Snake::draw(sf::RenderWindow& window) {
 	for (auto& s : segments) {
 		s.drawSegment(window);
 	}
+	sf::VertexArray leftPoints_(sf::PrimitiveType::Points, leftPoints.size());
+	sf::VertexArray rightPoints_(sf::PrimitiveType::Points, leftPoints.size());
+	for (size_t i{ 0 }; i < leftPoints.size(); i++) {
+		leftPoints_[i].position = leftPoints[i];
+	}
+	for (size_t i{ 0 }; i < rightPoints.size(); i++) {
+		rightPoints_[i].position = rightPoints[i];
+	}
+	window.draw(leftPoints_);
+	window.draw(rightPoints_);
 }

@@ -15,6 +15,10 @@ sf::Vector2f Segment::getPos() {
 	return segment.getPosition();
 }
 
+float Segment::getRadii() {
+	return segment.getRadius();
+}
+
 void Segment::setPos(sf::Vector2f newPos) {
 	segment.setPosition(newPos);
 }
