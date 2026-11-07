@@ -16,6 +16,8 @@ private:
 	float linkLength;
 	float maxBend = 0.8; // this is in radians
 	float pi = 2 * acos(0.0);
+	sf::Vector2f heading;
+	float headAngle;
 	std::vector<sf::Vector2f> leftPoints;
 	std::vector<sf::Vector2f> rightPoints;
 };

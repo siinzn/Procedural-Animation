@@ -3,7 +3,7 @@
 Snake::Snake(std::vector<float>segmentCount, float linkLength_) : linkLength(linkLength_) {
 	for (size_t i = 0; i < segmentCount.size(); i++) {
 		segments.push_back(Segment());
-		segments[i].initSegment(segmentCount[i], 5.0f, sf::Color::Transparent, sf::Color::Magenta, {450.f, 350.f}); // head
+		segments[i].initSegment(segmentCount[i], 5.0f, sf::Color::Transparent, sf::Color::Transparent, {450.f, 350.f}); // head
 	}
 }
 
@@ -61,6 +61,7 @@ void Snake::parametric_eq() {
 		else if (i == 0) {
 			sf::Vector2f heading = current - segments[1].getPos();
 			angle = atan2(heading.y, heading.x);
+			headAngle = angle;
 		}
 		sf::Vector2f left = current + sf::Vector2f(cos(angle + (pi / 2)), sin(angle + (pi / 2))) * segments[i].getRadii();
 		sf::Vector2f right = current + sf::Vector2f(cos(angle - (pi / 2)), sin(angle - (pi / 2))) * segments[i].getRadii();
@@ -73,14 +74,42 @@ void Snake::draw(sf::RenderWindow& window) {
 	for (auto& s : segments) {
 		s.drawSegment(window);
 	}
-	sf::VertexArray leftPoints_(sf::PrimitiveType::Points, leftPoints.size());
-	sf::VertexArray rightPoints_(sf::PrimitiveType::Points, leftPoints.size());
+
+	// for line strip
+	sf::VertexArray Lpoints(sf::PrimitiveType::LineStrip, leftPoints.size() + rightPoints.size() + 1);
+	size_t idx = 0;
 	for (size_t i{ 0 }; i < leftPoints.size(); i++) {
-		leftPoints_[i].position = leftPoints[i];
+		Lpoints[idx++].position = sf::Vector2f(leftPoints[i]);
 	}
-	for (size_t i{ 0 }; i < rightPoints.size(); i++) {
-		rightPoints_[i].position = rightPoints[i];
+	for (int i = rightPoints.size() - 1; i >= 0; i--) {
+		Lpoints[idx++].position = sf::Vector2f(rightPoints[i]);
 	}
-	window.draw(leftPoints_);
-	window.draw(rightPoints_);
+	Lpoints[idx].position = sf::Vector2f(leftPoints[0]);
+
+	// for triangle strip
+	sf::VertexArray Tpoints(sf::PrimitiveType::TriangleStrip, 2*leftPoints.size());
+	for(size_t k = 0; k < leftPoints.size(); k++) {
+		Tpoints[2 * k].position = leftPoints[k];
+		Tpoints[2 * k].color = sf::Color::Green;
+
+		Tpoints[2 * k + 1].position = rightPoints[k];
+		Tpoints[2 * k + 1].color = sf::Color::Green;
+	}
+
+	// for triangle fan
+	int N = 12;
+	sf::VertexArray Fpoints(sf::PrimitiveType::TriangleFan, N + 2);
+	Fpoints[0].position = segments[0].getPos();
+	Fpoints[0].color = sf::Color::Green;
+
+	for (int j = 0; j <= N; j++) {
+		float angle = headAngle + (pi / 2) - pi * (float(j) / N);
+		sf::Vector2f headPos = segments[0].getPos() + sf::Vector2f(cos(angle), sin(angle)) * segments[0].getRadii();
+		Fpoints[j + 1].position = headPos;
+		Fpoints[j + 1].color = sf::Color::Green;
+	}
+
+	window.draw(Tpoints);
+	window.draw(Lpoints);
+	window.draw(Fpoints);
 }
